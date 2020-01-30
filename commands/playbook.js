@@ -22,8 +22,9 @@ exports.handler = async argv => {
 
 async function run(file, inventory) {
 
-    let inventoryPath = '/host' + path.resolve(process.cwd(), inventory); // transforming path of the files in host to the path in VM's shared folder
-    let filePath = '/host' + path.resolve(process.cwd(), file);
+    // the paths should be from root of cm directory
+    let inventoryPath = path.join('/bakerx/cm/', inventory); // transforming path of the files in host to the path in VM's shared folder
+    let filePath = path.join('/bakerx/cm/', file);
 
     // Inside ansible vm, run:
     // $ ansible-playbook <file> -i inventory
