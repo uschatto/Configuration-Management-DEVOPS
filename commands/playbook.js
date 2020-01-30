@@ -22,6 +22,8 @@ exports.handler = async argv => {
 async function run(file, inventory) {
 
     // Inside ansible vm, run:
-    // ansible-playbook <file> -i inventory
-
+    // $ ansible-playbook <file> -i inventory
+    
+    // you can find the root of this repository mounted in `/bakerx` in the VM.
+    // So so path to the playbook.yml file in the vm will be `/bakerx/cm/playbook.yml`
 }
