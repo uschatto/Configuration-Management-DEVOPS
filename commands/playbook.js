@@ -1,3 +1,4 @@
+const path = require('path');
 const execSync = require('child_process').execSync;
 
 exports.command = 'playbook <file> <inventory>';
@@ -21,9 +22,10 @@ exports.handler = async argv => {
 
 async function run(file, inventory) {
 
+    let inventoryPath = '/host' + path.resolve(process.cwd(), inventory); // transforming path of the files in host to the path in VM's shared folder
+    let filePath = '/host' + path.resolve(process.cwd(), file);
+
     // Inside ansible vm, run:
     // $ ansible-playbook <file> -i inventory
-    
-    // you can find the root of this repository mounted in `/bakerx` in the VM.
-    // So so path to the playbook.yml file in the vm will be `/bakerx/cm/playbook.yml`
+
 }
