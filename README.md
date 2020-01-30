@@ -8,11 +8,17 @@ Clone this repo:
 git clone https://github.ncsu.edu/csc-devops-staff/hw2
 ```
 
-Create a private `csc519_hw2` GitHub repo, change the remote url of the repo you just cloned, and push:
+Create a private `HW1-DevOps` GitHub repo, change the remote url of the repo you just cloned, and push:
 
 ```bash
-git remote set-url origin https://github.ncsu.edu/<unityid>/csc519_hw2
+git remote set-url origin https://github.ncsu.edu/<unityid>/HW1-DevOps
 git push
+```
+
+Install the node.js packages.
+
+```
+npm install
 npm link
 ```
 
