@@ -1,0 +1,16 @@
+- group:
+    description: "Basic checks for dependencies"
+    checks:
+      - version:
+         cmd: mysql --version
+         range: ^5.7.x
+      - version:
+         cmd: node --version
+         range: ^10.x.x
+      # - availability:
+      #    port: 8080
+      #    status: 200
+      #    url: /
+      #    setup:
+      #    cmd: node app.js
+      #    wait_for: Started Application
