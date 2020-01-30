@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const execSync = require('child_process').execSync;
 
@@ -10,11 +11,17 @@ exports.builder = yargs => {
 
 
 exports.handler = async argv => {
-    const {file, inventory} = argv;
+    const { file, inventory } = argv;
 
     (async () => {
 
-        await run(file, inventory);
+        if (fs.existsSync(path.resolve('cm', file)) && fs.existsSync(path.resolve('cm', inventory))) {
+            await run(file, inventory);
+        }
+
+        else {
+            console.error(`File or inventory don't exist. Make sure to provide path from root of cm directory`);
+        }
 
     })();
 
