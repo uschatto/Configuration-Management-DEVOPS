@@ -12,7 +12,7 @@ Create a private `HW2-DevOps` GitHub repo, change the remote url of the repo you
 
 ```bash
 git remote set-url origin https://github.ncsu.edu/<unityid>/HW2-DevOps
-git push
+git push -u origin master
 ```
 
 Install the node.js packages.
