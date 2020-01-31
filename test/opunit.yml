@@ -4,13 +4,16 @@
       - version:
          cmd: mysql --version
          range: ^5.7.x
-      - version:
-         cmd: node --version
-         range: ^10.x.x
-      # - availability:
-      #    port: 8080
-      #    status: 200
-      #    url: /
-      #    setup:
-      #    cmd: node app.js
-      #    wait_for: Started Application
+      - availability:
+          port: 8065
+          status: 200
+          url: /
+      - reachable:
+         - /opt/mattermost/data
+         - /lib/systemd/system/mattermost.service
+      - service:
+         name: mattermost
+         status: active
+      - contains:
+         file: /opt/mattermost/config/config.json
+         string: '"DriverName": "mysql"'
