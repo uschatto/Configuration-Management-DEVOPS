@@ -1,5 +1,7 @@
 const child = require('child_process');
 const chalk = require('chalk');
+const path = require('path');
+const os = require('os');
 
 const scpSync = require('../lib/scp');
 const sshSync = require('../lib/ssh');
@@ -8,23 +10,26 @@ exports.command = 'setup';
 exports.desc = 'Provision and configure the configuration server';
 exports.builder = yargs => {
     yargs.options({
-
+        privateKey: {
+            describe: 'Install the provided private key on the configuration server',
+            type: 'string'
+        }
     });
 };
 
 
 exports.handler = async argv => {
-    const { } = argv;
+    const { privateKey } = argv;
 
     (async () => {
 
-        await run();
+        await run( privateKey );
 
     })();
 
 };
 
-async function run() {
+async function run(privateKey) {
 
     console.log(chalk.greenBright('Installing configuration server!'));
 
@@ -36,10 +41,10 @@ async function run() {
     result = child.spawnSync(`bakerx`, `run mattermost-srv bionic --ip 192.168.33.80`.split(' '), {stdio: 'inherit'} );
     if( result.error ) { process.exit( result.status ); }
 
-    // Enable this code if you are having trouble with sync folders. Don't forget to update the path used below.
-    // console.log(chalk.blueBright('Copying init script...'));
-    // result = scpSync ('cm/server-init.sh', 'vagrant@192.168.33.10:server-init.sh');
-    // if( result.error ) { process.exit( result.status ); }
+    console.log(chalk.blueBright('Installing privateKey on configuration server'));
+    let identifyFile = privateKey || path.join(os.homedir(), '.bakerx', 'insecure_private_key');
+    result = scpSync (identifyFile, 'vagrant@192.168.33.10:/home/vagrant/.ssh/mm_rsa');
+    if( result.error ) { process.exit( result.status ); }
 
     console.log(chalk.blueBright('Running init script...'));
     result = sshSync('/bakerx/cm/server-init.sh', 'vagrant@192.168.33.10');
