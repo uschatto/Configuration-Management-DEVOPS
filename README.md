@@ -5,7 +5,7 @@
 Clone this repo:
 
 ```bash
-git clone https://github.ncsu.edu/csc-devops-staff/hw2
+git clone https://github.com/CSC-DevOps/CM-Template
 ```
 
 Create a private `HW2-DevOps` GitHub repo, change the remote url of the repo you just cloned, and push:
