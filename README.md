@@ -8,10 +8,10 @@ Clone this repo:
 git clone https://github.ncsu.edu/csc-devops-staff/hw2
 ```
 
-Create a private `HW1-DevOps` GitHub repo, change the remote url of the repo you just cloned, and push:
+Create a private `HW2-DevOps` GitHub repo, change the remote url of the repo you just cloned, and push:
 
 ```bash
-git remote set-url origin https://github.ncsu.edu/<unityid>/HW1-DevOps
+git remote set-url origin https://github.ncsu.edu/<unityid>/HW2-DevOps
 git push
 ```
 
@@ -22,21 +22,72 @@ npm install
 npm link
 ```
 
-Now you can run `cm` commands, but it currently doesn't do anything (you need to implement hw2 here):
+You can run the `cm setup` command to help you:
 
+1. Provision the configuration server VM (with ip, sync folders)
+2. Provision the mattermost VM (with ip)
+3. Copy over the private key for the mattermost VM.
+4. Install ansible on the config server.
+
+*Note*: You must run `cm setup` while your cwd is inside the HW2-DevOps folder in order for the current sync path to be setup.
+
+The output should be similiar to the following:
 ```bash
-$ cm install-server
-# output: Hi there!
+$ cm setup
+Installing configuration server!
+Provisioning configuration server...
+Creating ansible-srv using vbox...
+⠋ Waiting for VM network to initialize... (can take a few seconds or minutes on slower hosts).
+received from ssh server:  SSH-2.0-OpenSSH_7.6p1 Ubuntu-4ubuntu0.3
+
+The VM is now ready. You can run this ssh command to connect to it.
+ssh -i "/Users/cjparnin/.bakerx/insecure_private_key" vagrant@127.0.0.1 -p 2004 -o StrictHostKeyChecking=no
+You may also run 'bakerx ssh ansible-srv' to connect to the machine.
+Provisioning mattermost server...
+Creating mattermost-srv using vbox...
+⠋ Waiting for VM network to initialize... (can take a few seconds or minutes on slower hosts).
+received from ssh server:  SSH-2.0-OpenSSH_7.6p1 Ubuntu-4ubuntu0.3
+
+The VM is now ready. You can run this ssh command to connect to it.
+ssh -i "/Users/cjparnin/.bakerx/insecure_private_key" vagrant@127.0.0.1 -p 2005 -o StrictHostKeyChecking=no
+You may also run 'bakerx ssh mattermost-srv' to connect to the machine.
+Installing privateKey on configuration server
+Warning: Permanently added '192.168.33.10' (ECDSA) to the list of known hosts.
+insecure_private_key                                                                                                                    100% 1675     2.0MB/s   00:00    
+Running init script...
+Warning: Permanently added '192.168.33.10' (ECDSA) to the list of known hosts.
++ sudo add-apt-repository ppa:ansible/ansible -y
+Reading package lists...
++ sudo apt-get update
++ sudo apt-get install ansible -y
+Reading package lists...
+...
 ```
 
-Now you have a copy of this template repo in your hw2 repository. Make the [necessary changes](link_to_hw_description) to complete the hw.
+You can also run `cm playbook cm/playbook.yml cm/inventory.ini`.
 
-### Submission requirements
+If everything is working correctly, you should see that you can run your playbook and successfully ping the mattermost VM.
+```
+cjparnin at MacBookPro in ~/classes/csc-devops-staff/hw2 on master [!]
+$ cm playbook cm/playbook.yml cm/inventory.ini 
+Running ansible script...
+Warning: Permanently added '192.168.33.10' (ECDSA) to the list of known hosts.
++ '[' 2 -ge 2 ']'
++ PLAYBOOK=/bakerx/cm/playbook.yml
++ INVENTORY=/bakerx/cm/inventory.ini
++ ansible-playbook /bakerx/cm/playbook.yml -i /bakerx/cm/inventory.ini
 
-- You should be able to run `cm install-server` on a new machine, and successfully run your hw2 to completion.
-- The VMs you create should have host-only network with these ip addresses:
-    - **ansible**: 192.168.33.10
-    - **webserver**: 192.168.33.90
+PLAY [mattermost] **************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [192.168.33.80]
+
+TASK [ping : ping the webserver] ***********************************************
+ok: [192.168.33.80]
+
+PLAY RECAP *********************************************************************
+192.168.33.80              : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+```
 
 #### Check progress
 
