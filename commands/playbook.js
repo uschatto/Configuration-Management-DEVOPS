@@ -1,6 +1,9 @@
 const fs = require('fs');
 const path = require('path');
-const execSync = require('child_process').execSync;
+const chalk = require('chalk');
+
+const sshSync = require('../lib/ssh');
+
 
 exports.command = 'playbook <file> <inventory>';
 exports.desc = 'Run provided playbook with given inventory';
@@ -15,7 +18,7 @@ exports.handler = async argv => {
 
     (async () => {
 
-        if (fs.existsSync(path.resolve('cm', file)) && fs.existsSync(path.resolve('cm', inventory))) {
+        if (fs.existsSync(path.resolve(file)) && fs.existsSync(path.resolve(inventory))) {
             await run(file, inventory);
         }
 
@@ -30,10 +33,12 @@ exports.handler = async argv => {
 async function run(file, inventory) {
 
     // the paths should be from root of cm directory
-    let inventoryPath = path.join('/bakerx/cm/', inventory); // transforming path of the files in host to the path in VM's shared folder
-    let filePath = path.join('/bakerx/cm/', file);
+    // Transforming path of the files in host to the path in VM's shared folder
+    let filePath = path.join('/bakerx/', file);
+    let inventoryPath = path.join('/bakerx/', inventory);
 
-    // Inside ansible vm, run:
-    // $ ansible-playbook <file> -i inventory
+    console.log(chalk.blueBright('Running ansible script...'));
+    let result = sshSync(`/bakerx/run-ansible.sh ${filePath} ${inventoryPath}`, 'vagrant@192.168.33.10');
+    if( result.error ) { process.exit( result.status ); }
 
 }
