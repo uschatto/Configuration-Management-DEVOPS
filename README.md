@@ -35,8 +35,8 @@ Now you have a copy of this template repo in your hw2 repository. Make the [nece
 
 - You should be able to run `cm install-server` on a new machine, and successfully run your hw2 to completion.
 - The VMs you create should have host-only network with these ip addresses:
-    - **ansible**: 192.168.44.76
-    - **webserver**: 192.168.44.77
+    - **ansible**: 192.168.33.10
+    - **webserver**: 192.168.33.90
 
 #### Check progress
 
