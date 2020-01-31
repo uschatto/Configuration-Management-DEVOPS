@@ -93,7 +93,7 @@ PLAY RECAP *********************************************************************
 
 You can check your progress by running:
 ```bash
-opunit verify -i ../test/inventory.yml -c ../test/opunit.yml
+opunit verify -i test/inventory.yml -c test/opunit.yml
 ```
 
 ### What is in this template repo
