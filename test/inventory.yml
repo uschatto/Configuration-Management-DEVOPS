@@ -1,4 +1,4 @@
 ---
 - ssh:
-  - target: vagrant@192.168.44.77
+  - target: vagrant@192.168.33.90
     private_key: ~/.bakerx/insecure_private_key
