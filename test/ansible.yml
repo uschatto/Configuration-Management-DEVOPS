@@ -17,4 +17,7 @@
           string: "\r"
           expect: false
           file: /bakerx/cm/server-init.sh
-  
+      - reachable:
+        - path: .ssh/mm_rsa
+          permission: 700
+    
