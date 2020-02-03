@@ -20,3 +20,6 @@
       - contains:
          file: /opt/mattermost/config/config.json
          string: '"DriverName": "mysql"'
+      # - reachable: 
+      #    - path: /root
+      #      permission: 700
