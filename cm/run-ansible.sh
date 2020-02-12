@@ -17,5 +17,6 @@ function die {
 
 PLAYBOOK=$1
 INVENTORY=$2
+VAULTPATH=$3
 
-ansible-playbook $PLAYBOOK -i $INVENTORY
+ansible-playbook --vault-password-file=$VAULTPATH $PLAYBOOK -i $INVENTORY

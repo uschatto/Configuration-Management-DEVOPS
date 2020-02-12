@@ -1,0 +1,47 @@
+---
+   - name: Install mysql-server
+     become: yes
+     apt:
+        name: ['mysql-server','python3-pip']
+        state: present
+        update_cache: yes
+        cache_valid_time: 3600
+
+   - name: pip install mysql-python
+     become: yes
+     pip:
+        name: pymysql
+        state: present
+
+   - name: Start the MySql service
+     become: yes
+     service:
+        name: mysql
+        state: started
+        enabled: true
+
+   - name: update mysql root password for all root accounts
+     become: yes
+     mysql_user:
+        name: root
+        password: "{{ mysql_root_password }}"
+        priv: "*.*:ALL,GRANT"
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+
+   - name: copy .my.cnf with root credentials to mattermost vm
+     become: yes
+     template: src=templates/root/.my.cnf.j2 dest=/root/.my.cnf owner=root mode=0600
+
+   - name: creating a database called mattermost
+     become: yes
+     mysql_db:
+       name: mattermost
+       state: present
+
+   - name: Create mattermost user
+     become: yes
+     mysql_user:
+        name: '{{ db_user }}'
+        password: '{{ db_password}}'
+        priv: 'mattermost.*:ALL,GRANT'
+        state: present

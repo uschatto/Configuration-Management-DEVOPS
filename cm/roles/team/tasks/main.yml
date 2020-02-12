@@ -1,0 +1,34 @@
+---
+   - name: Checking for the presence of the system admin
+     become: yes
+     shell: /opt/mattermost/bin/mattermost user search {{system_admin_username|quote}} 
+     register: system_user
+
+   - name: Creating mattermost user as a system admin and skipping if already present
+     become: yes
+     shell: /opt/mattermost/bin/mattermost user create --system_admin --email {{system_admin_email|quote}} --username {{system_admin_username|quote}} --password {{system_admin_password|quote}}
+     when: "system_user.stdout_lines|length==0" 
+
+   - name: Checking for the presence of the team
+     become: yes
+     command: /opt/mattermost/bin/mattermost team list
+     register: teams
+
+   - name: Create a team in mattermost and skipping if already present
+     become: yes
+     shell: /opt/mattermost/bin/mattermost team create --name {{mattermost_team|quote}} --display_name "My New Team" 
+     when: "mattermost_team not in teams.stdout_lines"
+
+   - name: Checking for the presence of the user 
+     become: yes
+     shell: /opt/mattermost/bin/mattermost user search {{user_name|quote}}
+     register: user
+ 
+   - name: creating a user for mattermost and skipping if already present
+     become: yes
+     shell: /opt/mattermost/bin/mattermost user create --email {{ user_email|quote }} --username {{ user_name|quote }} --password {{ user_password|quote }}
+     when: "user.stdout_lines|length==0" 
+
+   - name: Adding the user to the team
+     become: yes
+     shell: /opt/mattermost/bin/mattermost team add {{mattermost_team|quote}} {{ user_email|quote }} {{ user_name|quote }}

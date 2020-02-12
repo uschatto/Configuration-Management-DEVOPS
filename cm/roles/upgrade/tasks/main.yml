@@ -1,0 +1,7 @@
+---
+   - name: Update/Upgrade apt
+     become: yes
+     apt:
+        update_cache: yes
+        upgrade: 'yes'
+        state: latest

@@ -1,0 +1,20 @@
+---                                                                                                                                              
+  - name: Enable email notifications 
+    become: yes
+    command: chdir=/opt/mattermost/bin {{ item }}
+    with_items:
+      - ./mattermost config set EmailSettings.EnableSMTPAuth "true"
+      - ./mattermost config set EmailSettings.SendEmailNotifications "true"
+      - ./mattermost config set EmailSettings.FeedbackName "No-Reply"
+      - ./mattermost config set EmailSettings.SMTPUsername {{smtp_user}} 
+      - ./mattermost config set EmailSettings.SMTPPassword {{smtp_password}}
+      - ./mattermost config set EmailSettings.SMTPServer "smtp.gmail.com"
+      - ./mattermost config set EmailSettings.SMTPPort "587"
+      - ./mattermost config set EmailSettings.ConnectionSecurity "STARTTLS" 
+    no_log: True
+
+  - name: Restart mattermost service
+    become: yes
+    service:
+       name: mattermost
+       state: restarted

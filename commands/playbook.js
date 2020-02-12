@@ -9,17 +9,23 @@ exports.command = 'playbook <file> <inventory>';
 exports.desc = 'Run provided playbook with given inventory';
 exports.builder = yargs => {
     yargs.options({
+       vaultpass: {
+            alias: 'vp',
+            describe: 'the password to use for ansible vault',
+            default: 'secret123H#',
+            type: 'string'
+        }
     });
 };
 
 
 exports.handler = async argv => {
-    const { file, inventory } = argv;
+    const { file, inventory, vaultpass } = argv;
 
     (async () => {
 
         if (fs.existsSync(path.resolve(file)) && fs.existsSync(path.resolve(inventory))) {
-            await run(file, inventory);
+            await run(file, inventory, vaultpass);
         }
 
         else {
@@ -30,15 +36,25 @@ exports.handler = async argv => {
 
 };
 
-async function run(file, inventory) {
+async function run(file, inventory, vaultpass) {
 
     // the paths should be from root of cm directory
     // Transforming path of the files in host to the path in VM's shared folder
     let filePath = '/bakerx/'+ file;
     let inventoryPath = '/bakerx/' +inventory;
 
+    if(vaultpass)
+    {
+        console.log(chalk.bgCyan('Creating the vault password file on the configuration server in /tmp'));
+        result = sshSync (`"echo ${vaultpass} > /tmp/.vault_pass"`, 'vagrant@192.168.33.10');
+        result = sshSync("chmod '0600' /tmp/.vault_pass", 'vagrant@192.168.33.10');
+        if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    }
+
+    let vaultPath = '/tmp/.vault_pass';
+
     console.log(chalk.blueBright('Running ansible script...'));
-    let result = sshSync(`/bakerx/cm/run-ansible.sh ${filePath} ${inventoryPath}`, 'vagrant@192.168.33.10');
+    result = sshSync(`/bakerx/cm/run-ansible.sh ${filePath} ${inventoryPath} ${vaultPath}`, 'vagrant@192.168.33.10');
     if( result.error ) { process.exit( result.status ); }
 
 }

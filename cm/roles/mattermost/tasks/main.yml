@@ -1,0 +1,80 @@
+---
+   - name: Download the latest version of the mattermost server
+     get_url:
+        url: https://releases.mattermost.com/5.19.1/mattermost-5.19.1-linux-amd64.tar.gz
+        dest: /tmp/
+
+   - name: Extract the mattermost server files
+     become: yes
+     unarchive:
+        src: /tmp/mattermost-5.19.1-linux-amd64.tar.gz
+        dest: /opt/
+        copy: no
+     args:
+        creates: /opt/mattermost/bin/platform
+
+   - name: Create a group called mattermost
+     become: yes
+     group:
+        name: '{{ system_group }}' 
+        system: yes
+
+   - name: Create a system user called mattermost
+     become: yes
+     user:
+        name: '{{ system_user }}'
+        group: '{{ system_group }}'
+        system: yes
+        createhome: no
+
+   - name: Change mattermost directory permissions
+     become: yes
+     file:
+        path: /opt/mattermost
+        state: directory
+        owner: '{{ system_user }}'
+        group: '{{ system_group }}'
+        mode: g=rwx
+        recurse: yes
+
+   - name: Edit config.json to set up drivername
+     become: yes
+     lineinfile:
+        path: /opt/mattermost/config/config.json
+        regexp: '"DriverName": "mysql",'
+        line: '    "DriverName": "mysql",'
+        backrefs: yes
+        state: present
+
+   - name: Edit config.json to set up datasource
+     become: yes
+     lineinfile:
+        path: /opt/mattermost/config/config.json
+        regexp: '"DataSource":'
+        line: '    "DataSource": "{{db_user}}:{{db_password}}@tcp(127.0.0.1:3306)/mattermost?charset=utf8mb4,utf8\u0026readTimeout=30s\u0026writeTimeout=30s",'
+        backrefs: yes
+        state: present
+
+   - name: Edit config.json to set up SiteURL
+     become: yes
+     lineinfile:
+        path: /opt/mattermost/config/config.json
+        regexp: '"SiteURL":'
+        line: '        "SiteURL": "http://192.168.33.80:8065",'
+        backrefs: yes
+        state: present
+
+   - name: Create mattermost systemd service
+     become: yes
+     template: src=templates/root/mattermost.service.j2 dest=/etc/systemd/system/mattermost.service owner=root group=root mode=0664
+   
+   - name: Create mattermost systemd service
+     become: yes
+     template: src=templates/root/mattermost.service.j2 dest=/lib/systemd/system/mattermost.service owner=root group=root mode=0664
+
+   - name: Enable Mattermost service
+     become: yes
+     service:
+        name: mattermost
+        state: started
+        enabled: yes
