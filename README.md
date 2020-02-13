@@ -45,4 +45,4 @@ Role - [nginxssl](https://github.ncsu.edu/uschatto/HW2-DevOps/tree/master/cm/rol
 
 The argument --vaultpass will take the vault password as an input. The password will be used to write to a .vault_pass file in /tmp directory. This file path will then be used in the ansible-playbook command in run-ansible.sh as --vault-password-file argument. In my repository playbook.yml is encrypted which contains all the passwords.
 
-**SCREENCAST**
+[**SCREENCAST**](https://drive.google.com/open?id=1tEXnRzqV-6BBo6t5QGPsGWHQxt2_bJMT)
